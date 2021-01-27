@@ -427,7 +427,14 @@ int main (int argc, char *argv[])
 		" - Create RTSP server out of user created pipeline:\n"
 		"\tgst-variable-rtsp-server \"videotestsrc ! v4l2h264enc"
 		" ! rtph264pay name=pay0 pt=96\"\n"
-		;
+		" - Create RTSP server using RK3399 hardware encoder:\n"
+        	"\tgst-variable-rtsp-server -H 0.0.0.0 -p 9098 \"v4l2src"
+		"device=/dev/video10 ! video/x-raw,width=640 ! mpph264enc"
+		" ! rtph264pay name=pay0 pt=96\"\n"
+		" - Create RTSP server using Jetson GPU encoder:\n"
+        	"\tgst-variable-rtsp-server -H 0.0.0.0 \"v4l2src"
+	        " device=/dev/video0 ! video/x-raw,width=640 ! nvvidconv "
+		"! nvv4l2h264enc ! rtph264pay name=pay0 pt=96\"\n";
 
 	/* Ensure that there are command arguments */
 	if (argc == 1) {
