@@ -32,6 +32,8 @@ The basic pipeline that this program uses is as follows: `v4l2src ! imxipuvideot
 
 This program uses gstreamer elements provided by [gstreamer-imx](https://github.com/Freescale/gstreamer-imx) and gstreamer-rtsp-server-1.0. Before running this program, please verify that these plugins are available.
 
+Gst rtsp server development library is needed. Debian package: libgstrtspserver-1.0-dev.
+
 ## Compile ##
 
 To cross compile: `./make-for-imx6 gst-variable-rtsp-server`
