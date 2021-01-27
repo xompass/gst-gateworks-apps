@@ -386,6 +386,7 @@ int main (int argc, char *argv[])
 	char *port = (char *) DEFAULT_PORT;
 	char *mount_point = (char *) DEFAULT_MOUNT_POINT;
 	char *user_pipeline = NULL;
+	char *host = (char *) DEFAULT_HOST;
 
 	/* User Arguments */
 	const struct option long_opts[] = {
@@ -393,6 +394,7 @@ int main (int argc, char *argv[])
 		{"version",          no_argument,       0, 'v'},
 		{"debug",            required_argument, 0, 'd'},
 		{"mount-point",      required_argument, 0, 'm'},
+		{"host",             required_argument, 0, 'H'},
 		{"port",             required_argument, 0, 'p'},
 		{"steps",            required_argument, 0, 's'},
 		{"min-bitrate",      required_argument, 0,  0 },
@@ -400,7 +402,7 @@ int main (int argc, char *argv[])
 		{"msg-rate",         required_argument, 0, 'r'},
 		{ /* Sentinel */ }
 	};
-	char *arg_parse = "?hvd:m:p:u:s:i:f:b:l:c:a:r:";
+	char *arg_parse = "?hvd:m:H:p:u:s:i:f:b:l:c:a:r:";
 	const char *usage =
 		"Usage: gst-variable-rtsp-server [OPTIONS]\n\n"
 		"Options:\n"
@@ -409,6 +411,8 @@ int main (int argc, char *argv[])
 		" --debug,           -d - Debug Level (default: 0)\n"
 		" --mount-point,     -m - What URI to mount"
 		" (default: " DEFAULT_MOUNT_POINT ")\n"
+		" --host,            -H - Host to bind"
+		" (default: " DEFAULT_HOST ")\n"
 		" --port,            -p - Port to sink on"
 		" (default: " DEFAULT_PORT ")\n"
 		" --steps,           -s - Steps to get to 'worst' quality"
@@ -478,6 +482,10 @@ int main (int argc, char *argv[])
 			mount_point = optarg;
 			dbg(1, "set mount point to: %s\n", mount_point);
 			break;
+		case 'H': /* Host */
+			host = optarg;
+			dbg(1, "set host to: %s\n", host);
+			break;
 		case 'p': /* Port */
 			port = optarg;
 			dbg(1, "set port to: %s\n", port);
@@ -538,6 +546,9 @@ int main (int argc, char *argv[])
 		g_printerr("Could not create RTSP server\n");
 		return -ECODE_RTSP;
 	}
+	if (strcmp(host, DEFAULT_HOST) != 0) {
+		gst_rtsp_server_set_address(info.server, host);
+	}
 	g_object_set(info.server, "service", port, NULL);
 
 	/* Map URI mount points to media factories */
@@ -575,8 +586,8 @@ int main (int argc, char *argv[])
 		         G_CALLBACK(new_client_handler), &info);
 
 	/* Run GBLIB main loop until it returns */
-	g_print("Stream ready at rtsp://" DEFAULT_HOST ":%s%s\n",
-		port, mount_point);
+	g_print("Stream ready at rtsp://%s:%s%s\n",
+		host, port, mount_point);
 	g_main_loop_run(info.main_loop);
 
 	/* Cleanup */
