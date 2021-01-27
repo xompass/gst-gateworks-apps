@@ -52,6 +52,7 @@ Options:
  --version,         -v - Program Version: 1.1
  --debug,           -d - Debug Level (default: 0)
  --mount-point,     -m - What URI to mount (default: /stream)
+ --host,            -H - Host to bind (default: 127.0.0.1)
  --port,            -p - Port to sink on (default: 9099)
  --user-pipeline,   -u - User supplied pipeline. Note the
                          below options are NO LONGER
@@ -75,4 +76,10 @@ Examples:
 
  2. Create RTSP server out of user created pipeline:
         gst-variable-rtsp-server -u "videotestsrc ! imxvpuenc_h264 ! rtph264pay name=pay0 pt=96"
+
+ 3. Create RTSP server using RK3399 hardware encoder:
+        gst-variable-rtsp-server -H 0.0.0.0 -p 9098 "v4l2src device=/dev/video10 ! video/x-raw,width=640 ! mpph264enc ! rtph264pay name=pay0 pt=96"
+
+ 4. Create RTSP server using Jetson GPU encoder:
+        gst-variable-rtsp-server -H 0.0.0.0 "v4l2src device=/dev/video0 ! video/x-raw,width=640 ! nvvidconv ! nvv4l2h264enc ! rtph264pay name=pay0 pt=96"
 ```
